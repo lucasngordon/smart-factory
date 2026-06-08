@@ -1,0 +1,44 @@
+services:
+
+  mosquitto:
+    image: eclipse-mosquitto:latest
+    container_name: mosquitto
+    ports:
+      - "1883:1883"
+    volumes:
+      - mosquitto_data:/mosquitto/data
+      - mosquitto_log:/mosquitto/log
+      - ./mosquitto.conf:/mosquitto/config/mosquitto.conf
+    restart: unless-stopped
+
+  simulador:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.simulador
+    environment:
+      - MQTT_BROKER=mosquitto
+      - MQTT_PORT=1883
+      - TOPIC=fabrica/linha1/maquinaA/metricas
+
+  processador:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.processador
+    environment:
+      - MQTT_BROKER=mosquitto
+      - MQTT_PORT=1883
+      - TOPIC=fabrica/linha1/maquinaA/metricas
+
+  banco_dados:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.banco_dados
+    environment:
+      - MQTT_BROKER=mosquitto
+      - MQTT_PORT=1883
+      - TOPIC=fabrica/linha1/maquinaA/metricas
+      - MONGO_URI=${MONGO_URI}
+
+volumes:
+  mosquitto_data:
+  mosquitto_log:
