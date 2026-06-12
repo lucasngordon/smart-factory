@@ -16,7 +16,6 @@ if not MONGO_URI:
 client = MongoClient(MONGO_URI)
 db = client["smart_factory"]
 col = db["telemetria"]
-table = db["telemetria_tabela"]
 
 # -------------------------
 # FASTAPI
@@ -58,21 +57,7 @@ def dashboard():
             .temp { color: #f87171; font-size: 32px; }
             .vib { color: #60a5fa; font-size: 32px; }
             .eng { color: #34d399; font-size: 32px; }
-
-            table {
-                margin: 40px auto;
-                border-collapse: collapse;
-                width: 80%;
-            }
-
-            th, td {
-                border: 1px solid #334155;
-                padding: 8px;
-            }
-
-            th {
-                background: #1e293b;
-            }
+            
         </style>
     </head>
 
