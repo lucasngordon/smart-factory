@@ -30,13 +30,13 @@ try:
             "sensor_id": "maquinaA",
             "timestamp": int(time.time() * 1000),
             "temperatura": round(random.uniform(60, 110), 2),
-            "vibracao": round(random.uniform(1, 6.5), 2)
+            "vibracao": round(random.uniform(1, 6.5), 2),
+            "energia": round(random.uniform(10, 80), 2)
         }
 
         client.publish(TOPIC, json.dumps(payload), qos=1)
 
-        print(f"Temp={payload['temperatura']} | Vib={payload['vibracao']}")
-        print("RECEBI:", payload)
+        print(f"Temp={payload['temperatura']} | Vib={payload['vibracao']} | Energia={payload['energia']}")
         time.sleep(2)
 
 except KeyboardInterrupt:

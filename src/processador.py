@@ -23,20 +23,20 @@ def on_connect(client, userdata, flags, rc):
 # -------------------------
 def on_message(client, userdata, msg):
     try:
-        print("\n📩 Mensagem recebida!")
-        print(f"Tópico: {msg.topic}")
-
         payload = json.loads(msg.payload.decode())
-        print("Payload:", payload)
 
         temp = float(payload.get("temperatura", 0))
         vib = float(payload.get("vibracao", 0))
+        energia = float(payload.get("energia", 0))
 
         if temp > 100:
             print(f"⚠️ ALERTA: temperatura crítica {temp}°C")
 
         if vib > 5:
-            print(f"⚠️ ALERTA: vibração alta {vib}")
+            print(f"⚠️ ALERTA: vibração alta {vib}mm/s")
+            
+        if energia > 70:
+            print(f"⚠️ ALERTA: consumo energético alto {energia} kW")
 
     except json.JSONDecodeError:
         print("❌ Erro: JSON inválido")
