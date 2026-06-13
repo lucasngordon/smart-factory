@@ -150,21 +150,23 @@ def dashboard():
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
+    print("WS conectado")
 
     try:
         while True:
             dado = col.find_one(sort=[("timestamp", -1)])
 
-            if dado:
-                await websocket.send_json({
-                    "temperatura": dado.get("temperatura", 0),
-                    "vibracao": dado.get("vibracao", 0),
-                    "energia": dado.get("energia", 0),
-                    "status": dado.get("status", "N/A"),
-                    "alertas": dado.get("alertas", [])
-                })
+            print("ENVIANDO:", dado)
+
+            await websocket.send_json({
+                "temperatura": float(dado.get("temperatura", 0)),
+                "vibracao": float(dado.get("vibracao", 0)),
+                "energia": float(dado.get("energia", 0)),
+                "status": dado.get("status"),
+                "alertas": dado.get("alertas", [])
+            })
 
             await asyncio.sleep(2)
 
-    except WebSocketDisconnect:
-        print("Cliente desconectado")
+    except Exception as e:
+        print("ERRO WS:", e)
