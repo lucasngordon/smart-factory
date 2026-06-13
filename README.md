@@ -27,7 +27,7 @@ docker compose version
 ## 1. Clonar o repositório
 
 ```bash
-git clone <url-do-repositorio>
+git clone https://github.com/lucasngordon/smart-factory
 cd smart-factory
 ```
 
