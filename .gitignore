@@ -1,15 +1,43 @@
-# Ignorar ambientes virtuais do Python
+# Ambientes virtuais Python
 venv/
 .venv/
 env/
 
-# Ignorar arquivos temporários do Python
-__pycache__/
-*.pyc
+# Variáveis de ambiente
+.env
 
-# Ignorar arquivos de configuração local do VS Code
+# Cache Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Arquivos de build/distribuição
+build/
+dist/
+*.egg-info/
+
+# Logs
+*.log
+
+# Arquivos do VS Code
 .vscode/
 
-# Ignorar arquivos ocultos do sistema operacional
+# Arquivos do sistema operacional
 .DS_Store
 Thumbs.db
+
+# Arquivos do Pytest
+.pytest_cache/
+
+# Cache de cobertura de testes
+.coverage
+htmlcov/
+
+# Cache do mypy
+.mypy_cache/
+
+# Cache do Ruff
+.ruff_cache/
+
+# Jupyter
+.ipynb_checkpoints/
