@@ -71,6 +71,7 @@ def dashboard():
             .temp { color: #f87171; font-size: 32px; }
             .vib { color: #60a5fa; font-size: 32px; }
             .eng { color: #34d399; font-size: 32px; }
+            .sts { color: black; font-size: 32px; }
             
         </style>
     </head>
@@ -94,6 +95,11 @@ def dashboard():
             <div class="card">
                 <h2>Energia</h2>
                 <div id="engCard" class="eng">--</div>
+            </div>
+            
+            <div class="card">
+                <h2>Status</h2>
+                <div id="statusCard" class="sts">--</div>
             </div>
         </div>
 
@@ -122,13 +128,15 @@ def dashboard():
                 // Temperatura
                 document.getElementById("tempCard")
                     .classList.toggle("alerta", temp > 100);
-
                 // Vibração
                 document.getElementById("vibCard")
                     .classList.toggle("alerta", vib > 5);
                 // Energia
                 document.getElementById("engCard")
                     .classList.toggle("alerta", eng > 70);
+                // Status
+                document.getElementById("statusCard").innerText =
+                    data.status;
             };
         </script>
 
@@ -151,7 +159,9 @@ async def websocket_endpoint(websocket: WebSocket):
                 await websocket.send_json({
                     "temperatura": dado.get("temperatura"),
                     "vibracao": dado.get("vibracao"),
-                    "energia": dado.get("energia")
+                    "energia": dado.get("energia"),
+                    "status": dado.get("status"),
+                    "alertas": dado.get("alertas", [])
                 })
 
             await asyncio.sleep(2)
