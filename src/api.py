@@ -52,6 +52,20 @@ def dashboard():
                 padding: 20px;
                 border-radius: 15px;
                 width: 220px;
+                transition: all 0.3s ease;
+            }
+
+            .alerta {
+                background: #7f1d1d;
+                border: 2px solid #ef4444;
+                box-shadow: 0 0 20px #ef4444;
+                animation: piscar 1s infinite;
+            }
+
+            @keyframes piscar {
+                0% { opacity: 1; }
+                50% { opacity: 0.7; }
+                100% { opacity: 1; }
             }
 
             .temp { color: #f87171; font-size: 32px; }
@@ -69,17 +83,17 @@ def dashboard():
         <div class="container">
             <div class="card">
                 <h2>Temperatura</h2>
-                <div id="temp" class="temp">--</div>
+                <div id="tempCard" class="temp">--</div>
             </div>
 
             <div class="card">
                 <h2>Vibração</h2>
-                <div id="vib" class="vib">--</div>
+                <div id="vibCard" class="vib">--</div>
             </div>
 
             <div class="card">
                 <h2>Energia</h2>
-                <div id="eng" class="eng">--</div>
+                <div id="engCard" class="eng">--</div>
             </div>
         </div>
 
@@ -92,14 +106,29 @@ def dashboard():
             ws.onmessage = function(event) {
                 const data = JSON.parse(event.data);
 
-                document.getElementById("temp").innerText =
-                    Number(data.temperatura).toFixed(1) + " °C";
+                const temp = Number(data.temperatura);
+                const vib = Number(data.vibracao);
+                const eng = Number(data.energia);
 
-                document.getElementById("vib").innerText =
-                    Number(data.vibracao).toFixed(2) + " mm/s";
+                document.getElementById("tempCard").innerText =
+                    temp.toFixed(1) + " °C";
 
-                document.getElementById("eng").innerText =
-                    Number(data.energia).toFixed(2) + " kW";
+                document.getElementById("vibCard").innerText =
+                    vib.toFixed(2) + " mm/s";
+
+                document.getElementById("engCard").innerText =
+                    eng.toFixed(2) + " kW";
+
+                // Temperatura
+                document.getElementById("tempCard")
+                    .classList.toggle("alerta", temp > 100);
+
+                // Vibração
+                document.getElementById("vibCard")
+                    .classList.toggle("alerta", vib > 5);
+                // Energia
+                document.getElementById("engCard")
+                    .classList.toggle("alerta", eng > 70);
             };
         </script>
 

@@ -44,7 +44,6 @@ def on_message(client, userdata, msg):
         payload["sensor_id"] = payload.get("sensor_id", "maquinaA")
 
         col.insert_one(payload)
-        print("💾 salvo no MongoDB")
 
     except Exception as e:
         print("Erro Mongo writer:", e)
