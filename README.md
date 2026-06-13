@@ -39,10 +39,9 @@ Copie o arquivo `.env.example` para `.env`:
 
 ```bash
 cp .env.example .env
+```
 
 # Executando o Projeto
-
-## Subir todos os containers
 
 Na raiz do projeto:
 
