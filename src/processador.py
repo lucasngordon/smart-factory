@@ -12,39 +12,40 @@ OUTPUT_TOPIC = os.getenv("OUTPUT_TOPIC", "fabrica/processado")
 MQTT_USER = os.getenv("MQTT_USERNAME")
 MQTT_PASS = os.getenv("MQTT_PASSWORD")
 
+
 def on_connect(client, userdata, flags, rc):
+    print("CONN CODE:", rc)
+
     if rc == 0:
         print("Processador conectado")
-        client.subscribe(INPUT_TOPIC, qos=1)
+        client.subscribe(INPUT_TOPIC)
     else:
-        print("Erro MQTT:", rc)
+        print("Erro conexão MQTT")
+
 
 def on_message(client, userdata, msg):
-    try:
-        payload = json.loads(msg.payload.decode())
+    payload = json.loads(msg.payload.decode())
 
-        temperatura = float(payload.get("temperatura", 0))
-        vibracao = float(payload.get("vibracao", 0))
-        energia = float(payload.get("energia", 0))
+    temperatura = float(payload.get("temperatura", 0))
+    vibracao = float(payload.get("vibracao", 0))
+    energia = float(payload.get("energia", 0))
 
-        alertas = []
+    alertas = []
 
-        if temperatura > 100:
-            alertas.append("temperatura_critica")
-        if vibracao > 5:
-            alertas.append("vibracao_alta")
-        if energia > 70:
-            alertas.append("energia_alta")
+    if temperatura > 100:
+        alertas.append("temperatura_critica")
+    if vibracao > 5:
+        alertas.append("vibracao_alta")
+    if energia > 70:
+        alertas.append("energia_alta")
 
-        payload["alertas"] = alertas
-        payload["status"] = "ALERTA" if alertas else "NORMAL"
+    payload["alertas"] = alertas
+    payload["status"] = "ALERTA" if alertas else "NORMAL"
 
-        client.publish(OUTPUT_TOPIC, json.dumps(payload), qos=1)
+    client.publish(OUTPUT_TOPIC, json.dumps(payload))
 
-        print("Processado:", payload)
+    print("Processado:", payload)
 
-    except Exception as e:
-        print("Erro:", e)
 
 client = mqtt.Client(client_id="Processador")
 
@@ -54,12 +55,5 @@ client.tls_set()
 client.on_connect = on_connect
 client.on_message = on_message
 
-while True:
-    try:
-        client.connect(BROKER, PORT, 60)
-        break
-    except Exception as e:
-        print("Aguardando MQTT broker...", e)
-        time.sleep(3)
-
+client.connect(BROKER, PORT, 60)
 client.loop_forever()
