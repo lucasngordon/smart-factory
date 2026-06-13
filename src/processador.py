@@ -5,62 +5,74 @@ import os
 
 BROKER = os.getenv("MQTT_BROKER", "mosquitto")
 PORT = int(os.getenv("MQTT_PORT", 1883))
-TOPIC = os.getenv("TOPIC", "fabrica/linha1/maquinaA/metricas")
 
-# -------------------------
-# CALLBACK: conexão
-# -------------------------
+INPUT_TOPIC = os.getenv("INPUT_TOPIC", "fabrica/raw")
+OUTPUT_TOPIC = os.getenv("OUTPUT_TOPIC", "fabrica/processado")
+
+
 def on_connect(client, userdata, flags, rc):
-    if rc == 0:
-        print("🟢 Conectado ao MQTT com sucesso")
-        client.subscribe(TOPIC, qos=1)
-        print(f"📡 Subscrito no tópico: {TOPIC}")
-    else:
-        print(f"🔴 Falha na conexão MQTT. Código: {rc}")
 
-# -------------------------
-# CALLBACK: mensagens
-# -------------------------
+    if rc == 0:
+        print("Processador conectado")
+        client.subscribe(INPUT_TOPIC, qos=1)
+    else:
+        print("Erro MQTT:", rc)
+
+
 def on_message(client, userdata, msg):
+
     try:
+
         payload = json.loads(msg.payload.decode())
 
-        temp = float(payload.get("temperatura", 0))
-        vib = float(payload.get("vibracao", 0))
+        temperatura = float(payload.get("temperatura", 0))
+        vibracao = float(payload.get("vibracao", 0))
         energia = float(payload.get("energia", 0))
 
-        if temp > 100:
-            print(f"⚠️ ALERTA: temperatura crítica {temp}°C")
+        alertas = []
 
-        if vib > 5:
-            print(f"⚠️ ALERTA: vibração alta {vib}mm/s")
-            
+        if temperatura > 100:
+            alertas.append("temperatura_critica")
+
+        if vibracao > 5:
+            alertas.append("vibracao_alta")
+
         if energia > 70:
-            print(f"⚠️ ALERTA: consumo energético alto {energia} kW")
+            alertas.append("energia_alta")
 
-    except json.JSONDecodeError:
-        print("❌ Erro: JSON inválido")
+        payload["alertas"] = alertas
+
+        payload["status"] = (
+            "ALERTA"
+            if alertas
+            else "NORMAL"
+        )
+
+        client.publish(
+            OUTPUT_TOPIC,
+            json.dumps(payload),
+            qos=1
+        )
+
+        print("Processado:", payload)
+
     except Exception as e:
-        print("❌ Erro no processamento:", e)
+        print("Erro:", e)
 
-# -------------------------
-# CLIENTE MQTT
-# -------------------------
+
 client = mqtt.Client(client_id="Processador")
 
 client.on_connect = on_connect
 client.on_message = on_message
 
-# -------------------------
-# CONEXÃO COM RETRY
-# -------------------------
 while True:
+
     try:
-        print("🔄 Conectando ao MQTT...")
         client.connect(BROKER, PORT, 60)
         break
+
     except Exception as e:
-        print("⏳ Aguardando MQTT broker...", e)
+        print("Aguardando MQTT...", e)
         time.sleep(3)
 
 client.loop_forever()

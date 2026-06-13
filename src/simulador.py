@@ -6,12 +6,11 @@ import os
 
 BROKER = os.getenv("MQTT_BROKER", "mosquitto")
 PORT = int(os.getenv("MQTT_PORT", 1883))
-TOPIC = os.getenv("TOPIC", "fabrica/linha1/maquinaA/metricas")
+
+TOPIC = os.getenv("TOPIC", "fabrica/raw")
 
 client = mqtt.Client(client_id="Sensor_MaquinaA")
 
-
-# conexão com retry
 while True:
     try:
         client.connect(BROKER, PORT, 60)
@@ -26,6 +25,7 @@ print("Simulador iniciado...")
 
 try:
     while True:
+
         payload = {
             "sensor_id": "maquinaA",
             "timestamp": int(time.time() * 1000),
@@ -34,12 +34,16 @@ try:
             "energia": round(random.uniform(10, 80), 2)
         }
 
-        client.publish(TOPIC, json.dumps(payload), qos=1)
+        client.publish(
+            TOPIC,
+            json.dumps(payload),
+            qos=1
+        )
 
-        print(f"Temp={payload['temperatura']} | Vib={payload['vibracao']} | Energia={payload['energia']}")
+        print(payload)
+
         time.sleep(2)
 
 except KeyboardInterrupt:
-    print("Encerrando simulador...")
     client.loop_stop()
     client.disconnect()
