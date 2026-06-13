@@ -43,14 +43,14 @@ cp .env.example .env
 
 Edite o arquivo .env:
 
-# MongoDB
+MongoDB
 MONGO_URI=sua_string_de_conexao_mongodb
 
-# MQTT Broker
+MQTT Broker
 MQTT_BROKER=mosquitto
 MQTT_PORT=1883
 
-# MQTT Topic base
+MQTT Topic base
 TOPIC=fabrica/linha1/maquinaA/metricas
 
 # Executando o Projeto
