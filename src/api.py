@@ -1,18 +1,21 @@
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.responses import HTMLResponse
 from pymongo import MongoClient
-from datetime import datetime, timedelta
 import os
 import asyncio
 
 # -------------------------
-# MONGO
+# ENV CONFIG
 # -------------------------
 MONGO_URI = os.getenv("MONGO_URI")
+API_URL = os.getenv("API_URL", "http://localhost:8000")
 
 if not MONGO_URI:
     raise ValueError("MONGO_URI não configurada")
 
+# -------------------------
+# MONGO
+# -------------------------
 client = MongoClient(MONGO_URI)
 db = client["smart_factory"]
 col = db["telemetria"]
@@ -23,56 +26,54 @@ col = db["telemetria"]
 app = FastAPI()
 
 # -------------------------
-# DASHBOARD HTML
+# DASHBOARD
 # -------------------------
 @app.get("/", response_class=HTMLResponse)
 def dashboard():
-    return """
+    return f"""
     <html>
     <head>
         <title>Smart Factory Dashboard</title>
 
         <style>
-            body {
+            body {{
                 font-family: Arial;
                 background-color: #0f172a;
                 color: white;
                 text-align: center;
-            }
+            }}
 
-            .container {
+            .container {{
                 display: flex;
                 justify-content: center;
                 gap: 20px;
                 margin-top: 30px;
-            }
+            }}
 
-            .card {
+            .card {{
                 background: #1e293b;
                 padding: 20px;
                 border-radius: 15px;
                 width: 220px;
-                transition: all 0.3s ease;
-            }
+            }}
 
-            .alerta {
+            .alerta {{
                 background: #7f1d1d;
                 border: 2px solid #ef4444;
                 box-shadow: 0 0 20px #ef4444;
                 animation: piscar 1s infinite;
-            }
+            }}
 
-            @keyframes piscar {
-                0% { opacity: 1; }
-                50% { opacity: 0.7; }
-                100% { opacity: 1; }
-            }
+            @keyframes piscar {{
+                0% {{ opacity: 1; }}
+                50% {{ opacity: 0.7; }}
+                100% {{ opacity: 1; }}
+            }}
 
-            .temp { color: #f87171; font-size: 32px; }
-            .vib { color: #60a5fa; font-size: 32px; }
-            .eng { color: #34d399; font-size: 32px; }
-            .sts { color: black; font-size: 32px; }
-            
+            .temp {{ color: #f87171; font-size: 32px; }}
+            .vib {{ color: #60a5fa; font-size: 32px; }}
+            .eng {{ color: #34d399; font-size: 32px; }}
+            .sts {{ color: white; font-size: 28px; }}
         </style>
     </head>
 
@@ -80,7 +81,6 @@ def dashboard():
 
         <h1>🏭 Smart Factory Dashboard</h1>
 
-        <!-- TEMPO REAL -->
         <div class="container">
             <div class="card">
                 <h2>Temperatura</h2>
@@ -96,7 +96,7 @@ def dashboard():
                 <h2>Energia</h2>
                 <div id="engCard" class="eng">--</div>
             </div>
-            
+
             <div class="card">
                 <h2>Status</h2>
                 <div id="statusCard" class="sts">--</div>
@@ -104,12 +104,13 @@ def dashboard():
         </div>
 
         <script>
-            // -------------------------
-            // WEBSOCKET TEMPO REAL
-            // -------------------------
-            const ws = new WebSocket("ws://localhost:8000/ws");
+            const ws = new WebSocket(
+                (location.protocol === "https:" ? "wss://" : "ws://") +
+                location.host +
+                "/ws"
+            );
 
-            ws.onmessage = function(event) {
+            ws.onmessage = function(event) {{
                 const data = JSON.parse(event.data);
 
                 const temp = Number(data.temperatura);
@@ -125,19 +126,18 @@ def dashboard():
                 document.getElementById("engCard").innerText =
                     eng.toFixed(2) + " kW";
 
-                // Temperatura
+                document.getElementById("statusCard").innerText =
+                    data.status || "N/A";
+
                 document.getElementById("tempCard")
                     .classList.toggle("alerta", temp > 100);
-                // Vibração
+
                 document.getElementById("vibCard")
                     .classList.toggle("alerta", vib > 5);
-                // Energia
+
                 document.getElementById("engCard")
                     .classList.toggle("alerta", eng > 70);
-                // Status
-                document.getElementById("statusCard").innerText =
-                    data.status;
-            };
+            }};
         </script>
 
     </body>
@@ -157,10 +157,10 @@ async def websocket_endpoint(websocket: WebSocket):
 
             if dado:
                 await websocket.send_json({
-                    "temperatura": dado.get("temperatura"),
-                    "vibracao": dado.get("vibracao"),
-                    "energia": dado.get("energia"),
-                    "status": dado.get("status"),
+                    "temperatura": dado.get("temperatura", 0),
+                    "vibracao": dado.get("vibracao", 0),
+                    "energia": dado.get("energia", 0),
+                    "status": dado.get("status", "N/A"),
                     "alertas": dado.get("alertas", [])
                 })
 
