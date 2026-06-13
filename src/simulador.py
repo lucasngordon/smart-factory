@@ -4,12 +4,19 @@ import time
 import random
 import os
 
-BROKER = os.getenv("MQTT_BROKER", "mosquitto")
-PORT = int(os.getenv("MQTT_PORT", 1883))
+BROKER = os.getenv("MQTT_BROKER")
+PORT = int(os.getenv("MQTT_PORT", 8883))
 
 TOPIC = os.getenv("TOPIC", "fabrica/raw")
 
+MQTT_USER = os.getenv("MQTT_USERNAME")
+MQTT_PASS = os.getenv("MQTT_PASSWORD")
+
 client = mqtt.Client(client_id="Sensor_MaquinaA")
+
+# AUTH + TLS (HiveMQ Cloud)
+client.username_pw_set(MQTT_USER, MQTT_PASS)
+client.tls_set()
 
 while True:
     try:
@@ -23,27 +30,16 @@ client.loop_start()
 
 print("Simulador iniciado...")
 
-try:
-    while True:
+while True:
+    payload = {
+        "sensor_id": "maquinaA",
+        "timestamp": int(time.time() * 1000),
+        "temperatura": round(random.uniform(60, 110), 2),
+        "vibracao": round(random.uniform(1, 6.5), 2),
+        "energia": round(random.uniform(10, 80), 2)
+    }
 
-        payload = {
-            "sensor_id": "maquinaA",
-            "timestamp": int(time.time() * 1000),
-            "temperatura": round(random.uniform(60, 110), 2),
-            "vibracao": round(random.uniform(1, 6.5), 2),
-            "energia": round(random.uniform(10, 80), 2)
-        }
+    client.publish(TOPIC, json.dumps(payload), qos=1)
+    print("Enviado:", payload)
 
-        client.publish(
-            TOPIC,
-            json.dumps(payload),
-            qos=1
-        )
-
-        print(payload)
-
-        time.sleep(2)
-
-except KeyboardInterrupt:
-    client.loop_stop()
-    client.disconnect()
+    time.sleep(2)
