@@ -1,51 +1,43 @@
 services:
 
-  mosquitto:
-    image: eclipse-mosquitto:latest
-    container_name: mosquitto
-    ports:
-      - "1883:1883"
-    volumes:
-      - mosquitto_data:/mosquitto/data
-      - mosquitto_log:/mosquitto/log
-      - ./mosquitto.conf:/mosquitto/config/mosquitto.conf
-    restart: unless-stopped
-
   simulador:
     build:
       context: .
       dockerfile: docker/Dockerfile.simulador
     environment:
-      - MQTT_BROKER=mosquitto
-      - MQTT_PORT=1883
+      - MQTT_BROKER=${MQTT_BROKER}
+      - MQTT_PORT=8883
+      - MQTT_USERNAME=admin
+      - MQTT_PASSWORD=Fabrica123
       - TOPIC=fabrica/raw
-    depends_on:
-      - mosquitto
+    restart: always
 
   processador:
     build:
       context: .
       dockerfile: docker/Dockerfile.processador
     environment:
-      - MQTT_BROKER=mosquitto
-      - MQTT_PORT=1883
+      - MQTT_BROKER=${MQTT_BROKER}
+      - MQTT_PORT=8883
+      - MQTT_USERNAME=admin
+      - MQTT_PASSWORD=Fabrica123
       - INPUT_TOPIC=fabrica/raw
       - OUTPUT_TOPIC=fabrica/processado
-    depends_on:
-      - mosquitto
+    restart: always
 
   banco_dados:
     build:
       context: .
       dockerfile: docker/Dockerfile.banco_dados
     environment:
-      - MQTT_BROKER=mosquitto
-      - MQTT_PORT=1883
+      - MQTT_BROKER=${MQTT_BROKER}
+      - MQTT_PORT=8883
+      - MQTT_USERNAME=admin
+      - MQTT_PASSWORD=Fabrica123
       - INPUT_TOPIC=fabrica/raw
       - OUTPUT_TOPIC=fabrica/processado
       - MONGO_URI=${MONGO_URI}
-    depends_on:
-      - mosquitto
+    restart: always
 
   api:
     build:
@@ -56,9 +48,4 @@ services:
       - "8000:8000"
     environment:
       - MONGO_URI=${MONGO_URI}
-    depends_on:
-      - banco_dados
-
-volumes:
-  mosquitto_data:
-  mosquitto_log:
+    restart: always
