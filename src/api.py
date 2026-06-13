@@ -154,7 +154,9 @@ async def websocket_endpoint(websocket: WebSocket):
 
     try:
         while True:
-            dado = col.find_one(sort=[("timestamp", -1)])
+            dado = col.find().sort("timestamp", -1).limit(1)
+            dado = list(dado)
+            dado = dado[0] if dado else None
 
             print("ENVIANDO:", dado)
 

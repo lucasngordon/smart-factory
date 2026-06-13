@@ -1,6 +1,5 @@
 import paho.mqtt.client as mqtt
 from pymongo import MongoClient
-from datetime import datetime, timezone
 import json
 import os
 import time
@@ -29,18 +28,16 @@ def on_connect(client, userdata, flags, rc):
     client.subscribe(TOPIC, qos=1)
 
 def on_message(client, userdata, msg):
+
     try:
         payload = json.loads(msg.payload.decode())
 
-        ts = payload.get("timestamp")
-
-        payload["timestamp"] = (
-            datetime.fromtimestamp(ts / 1000, tz=timezone.utc)
-            if ts else datetime.now(timezone.utc)
-        )
+        # 🔥 PADRONIZA TIMESTAMP (OBRIGATÓRIO)
+        payload["timestamp"] = int(time.time() * 1000)
 
         col.insert_one(payload)
-        print("Inserido no Mongo:", payload)
+
+        print("SALVANDO NO MONGO:", payload)
 
     except Exception as e:
         print("Erro Mongo:", e)
