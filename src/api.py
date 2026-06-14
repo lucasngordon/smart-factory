@@ -161,23 +161,23 @@ def dashboard():
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
-    print("WS conectado")
 
     try:
         while True:
-            dado = redis_client.get("ultima_telemetria")
+
+            dado = col.find_one(
+                sort=[("timestamp", -1)]
+            )
+
             if dado:
-                await websocket.send_text(dado)
 
-            print("ENVIANDO:", dado)
-
-            await websocket.send_json({
-                "temperatura": float(dado.get("temperatura", 0)),
-                "vibracao": float(dado.get("vibracao", 0)),
-                "energia": float(dado.get("energia", 0)),
-                "status": dado.get("status"),
-                "alertas": dado.get("alertas", [])
-            })
+                await websocket.send_json({
+                    "temperatura": float(dado.get("temperatura", 0)),
+                    "vibracao": float(dado.get("vibracao", 0)),
+                    "energia": float(dado.get("energia", 0)),
+                    "status": dado.get("status"),
+                    "alertas": dado.get("alertas", [])
+                })
 
             await asyncio.sleep(2)
 
