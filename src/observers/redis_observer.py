@@ -1,16 +1,21 @@
 import json
-from .observer import Observer
+from common.circuit_breaker import CircuitBreaker
 
 class RedisObserver(Observer):
 
     def __init__(self, redis_client):
+
         self.redis_client = redis_client
+
+        self.breaker = CircuitBreaker(
+            max_falhas=3,
+            tempo_recuperacao=30
+        )
 
     def update(self, payload):
 
-        self.redis_client.set(
+        self.breaker.call(
+            self.redis_client.set,
             "ultima_telemetria",
             json.dumps(payload)
         )
-
-        print("[Redis] Cache atualizado")
