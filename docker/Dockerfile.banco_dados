@@ -5,7 +5,6 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY src/banco_dados.py .
-COPY src/common ./common
+COPY src/ .
 
 CMD ["python", "-u", "banco_dados.py"]

@@ -4,6 +4,9 @@ import json
 import os
 import time
 import redis
+from observers.telemetria_subject import TelemetriaSubject
+from observers.mongo_observer import MongoObserver
+from observers.redis_observer import RedisObserver
 
 BROKER = os.getenv("MQTT_BROKER")
 PORT = int(os.getenv("MQTT_PORT", 8883))
@@ -18,7 +21,6 @@ MONGO_URI = os.getenv("MONGO_URI")
 client_mongo = MongoClient(MONGO_URI)
 db = client_mongo["smart_factory"]
 col = db["telemetria"]
-
 
 def on_connect(client, userdata, flags, rc):
     print("CONN CODE:", rc)
@@ -35,24 +37,29 @@ redis_client = redis.Redis(
     decode_responses=True
 )
 
+subject = TelemetriaSubject()
+
+subject.add_observer(
+    MongoObserver(col)
+)
+
+subject.add_observer(
+    RedisObserver(redis_client)
+)
+
 
 def on_message(client, userdata, msg):
     try:
+
         payload = json.loads(msg.payload.decode())
 
         payload["timestamp"] = int(time.time() * 1000)
 
-        redis_client.set(
-            "ultima_telemetria",
-            json.dumps(payload)
-        )
-
-        result = col.insert_one(payload)
-
-        print("SALVO NO MONGO:", result.inserted_id)
+        subject.notify(payload)
 
     except Exception as e:
-        print("Erro Mongo:", e)
+
+        print("Erro:", e)
 
 
 client = mqtt.Client(client_id="MongoWriter")
