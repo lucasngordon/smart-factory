@@ -3,6 +3,7 @@ from pymongo import MongoClient
 import json
 import os
 import time
+import redis
 
 BROKER = os.getenv("MQTT_BROKER")
 PORT = int(os.getenv("MQTT_PORT", 8883))
@@ -27,6 +28,12 @@ def on_connect(client, userdata, flags, rc):
         client.subscribe(TOPIC)
     else:
         print("Erro MQTT connect")
+        
+redis_client = redis.Redis(
+    host=os.getenv("REDIS_HOST", "localhost"),
+    port=int(os.getenv("REDIS_PORT", 6379)),
+    decode_responses=True
+)
 
 
 def on_message(client, userdata, msg):
@@ -34,6 +41,11 @@ def on_message(client, userdata, msg):
         payload = json.loads(msg.payload.decode())
 
         payload["timestamp"] = int(time.time() * 1000)
+
+        redis_client.set(
+            "ultima_telemetria",
+            json.dumps(payload)
+        )
 
         result = col.insert_one(payload)
 

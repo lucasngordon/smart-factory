@@ -4,3 +4,4 @@ dnspython
 fastapi
 uvicorn
 websockets
+redis
