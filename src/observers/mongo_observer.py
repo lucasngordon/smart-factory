@@ -1,4 +1,5 @@
 from common.circuit_breaker import CircuitBreaker
+from observer import Observer
 
 class MongoObserver(Observer):
 
