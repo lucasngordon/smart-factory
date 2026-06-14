@@ -1,6 +1,6 @@
 import json
 from common.circuit_breaker import CircuitBreaker
-from observer import Observer
+from .observer import Observer
 
 class RedisObserver(Observer):
 
