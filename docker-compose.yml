@@ -10,6 +10,8 @@ services:
       - MQTT_USERNAME=admin
       - MQTT_PASSWORD=Fabrica123
       - TOPIC=fabrica/raw
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
     restart: always
 
   processador:
@@ -23,6 +25,8 @@ services:
       - MQTT_PASSWORD=Fabrica123
       - INPUT_TOPIC=fabrica/raw
       - OUTPUT_TOPIC=fabrica/processado
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
     restart: always
 
   banco_dados:
@@ -37,6 +41,8 @@ services:
       - INPUT_TOPIC=fabrica/raw
       - OUTPUT_TOPIC=fabrica/processado
       - MONGO_URI=${MONGO_URI}
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
     restart: always
 
   api:
@@ -48,4 +54,11 @@ services:
       - "8000:8000"
     environment:
       - MONGO_URI=${MONGO_URI}
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
     restart: always
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"

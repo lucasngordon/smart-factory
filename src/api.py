@@ -3,6 +3,8 @@ from fastapi.responses import HTMLResponse
 from pymongo import MongoClient
 import os
 import asyncio
+import redis
+import json
 
 # -------------------------
 # ENV CONFIG
@@ -24,6 +26,15 @@ col = db["telemetria"]
 # FASTAPI
 # -------------------------
 app = FastAPI()
+
+# -------------------------
+# REDIS
+# -------------------------
+redis_client = redis.Redis(
+    host=os.getenv("REDIS_HOST", "localhost"),
+    port=int(os.getenv("REDIS_PORT", 6379)),
+    decode_responses=True
+)
 
 # -------------------------
 # DASHBOARD
@@ -154,9 +165,9 @@ async def websocket_endpoint(websocket: WebSocket):
 
     try:
         while True:
-            dado = col.find().sort("timestamp", -1).limit(1)
-            dado = list(dado)
-            dado = dado[0] if dado else None
+            dado = redis_client.get("ultima_telemetria")
+            if dado:
+                await websocket.send_text(dado)
 
             print("ENVIANDO:", dado)
 
