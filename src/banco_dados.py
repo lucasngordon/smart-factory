@@ -56,6 +56,8 @@ def on_message(client, userdata, msg):
         payload["timestamp"] = int(time.time() * 1000)
 
         subject.notify(payload)
+        
+        print("Salvo no MongoDB")
 
     except Exception as e:
 
