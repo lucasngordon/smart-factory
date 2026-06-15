@@ -198,7 +198,7 @@ REDIS_PORT=6379
 JWT_SECRET=sua_chave_secreta
 
 # API
-API_URL=https://smart-factory-api-atcye9cbf0gtaad0.eastus-01.azurewebsites.net
+API_URL=https://smart-factory-api.azurewebsites.net
 ```
 
 ## Descrição das Variáveis
@@ -229,6 +229,22 @@ Após configurar o arquivo `.env`, execute:
 docker compose up --build
 ```
 
+### Verifique se os containers estão em execução
+
+```bash
+docker ps
+```
+
+Os seguintes serviços devem estar ativos:
+
+```text
+simulador
+processador
+banco_dados
+redis
+api
+```
+
 ## Acessando o Dashboard
 
 Após iniciar os containers:
@@ -237,7 +253,7 @@ Após iniciar os containers:
 https://smart-factory-api-atcye9cbf0gtaad0.eastus-01.azurewebsites.net
 ```
 
-ou acessar o dashboard local:
+caso esteja indisponível, hospede uma URL pública na Azure ou acesse o dashboard localmente:
 
 ```text
 http://localhost:8000
