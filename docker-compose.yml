@@ -27,6 +27,7 @@ services:
       - OUTPUT_TOPIC=fabrica/processado
       - REDIS_HOST=redis
       - REDIS_PORT=6379
+      - JWT_SECRET=${JWT_SECRET}
     restart: always
 
   banco_dados:
@@ -43,6 +44,7 @@ services:
       - MONGO_URI=${MONGO_URI}
       - REDIS_HOST=redis
       - REDIS_PORT=6379
+      - JWT_SECRET=${JWT_SECRET}
     restart: always
 
   api:
