@@ -198,7 +198,7 @@ REDIS_PORT=6379
 JWT_SECRET=sua_chave_secreta
 
 # API
-API_URL=smart-factory-api-atcye9cbf0gtaad0.eastus-01.azurewebsites.net
+API_URL=https://smart-factory-api-atcye9cbf0gtaad0.eastus-01.azurewebsites.net
 ```
 
 ## Descrição das Variáveis
@@ -217,6 +217,8 @@ API_URL=smart-factory-api-atcye9cbf0gtaad0.eastus-01.azurewebsites.net
 | JWT_SECRET | Chave utilizada para assinatura dos tokens JWT |
 | API_URL | URL pública da API |
 
+> Observação: quando executado via Docker Compose, o valor de `REDIS_HOST` deve ser `redis`, pois esse é o nome do serviço definido no `docker-compose.yml`. Caso o Redis seja executado fora do Docker, utilize o endereço correspondente (por exemplo, `localhost`).
+
 ---
 
 ## Executando o Projeto
@@ -232,7 +234,7 @@ docker compose up --build
 Após iniciar os containers:
 
 ```text
-smart-factory-api-atcye9cbf0gtaad0.eastus-01.azurewebsites.net
+https://smart-factory-api-atcye9cbf0gtaad0.eastus-01.azurewebsites.net
 ```
 
 ou acessar o dashboard local:
@@ -274,6 +276,57 @@ Atualmente o deploy contempla:
 | Simulador | Docker Local |
 | Processador | Docker Local |
 | Banco_Dados | Docker Local |
+
+> Atualmente apenas a API e o Dashboard estão hospedados na Azure. Os serviços Simulador, Processador, Banco_Dados e Redis são executados localmente via Docker Compose durante o desenvolvimento.
+
+---
+
+# 🔒 Segurança
+
+## MQTT com TLS
+
+Todos os microsserviços utilizam:
+
+```python
+client.tls_set()
+```
+
+Comunicação segura pela porta:
+
+```text
+8883
+```
+
+---
+
+## JWT
+
+As mensagens processadas são assinadas digitalmente.
+
+Fluxo:
+
+```text
+Processador
+    │
+    │ JWT
+    ▼
+Banco_Dados
+```
+
+Somente mensagens autenticadas são persistidas.
+
+---
+
+## HTTPS / WSS
+
+A aplicação está hospedada no Azure App Service.
+
+Protocolos utilizados:
+
+```text
+HTTPS
+WSS (WebSocket Secure)
+```
 
 ---
 
