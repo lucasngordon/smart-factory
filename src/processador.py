@@ -1,7 +1,6 @@
 import paho.mqtt.client as mqtt
 import json
 import os
-
 from common.jwt_utils import gerar_token
 
 # =========================
@@ -43,7 +42,7 @@ def on_connect(client, userdata, flags, rc):
 def on_message(client, userdata, msg):
 
     try:
-
+        
         payload = json.loads(
             msg.payload.decode()
         )
@@ -101,7 +100,7 @@ def on_message(client, userdata, msg):
             f"Processado: "
             f"{payload.get('sensor_id', 'desconhecido')}"
         )
-
+        
     except json.JSONDecodeError:
 
         print("JSON inválido recebido")

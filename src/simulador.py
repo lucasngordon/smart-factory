@@ -39,6 +39,7 @@ while True:
         "energia": round(random.uniform(10, 80), 2)
     }
 
+    payload["timestamp_envio"] = time.time_ns()
     client.publish(TOPIC, json.dumps(payload), qos=1)
     print("Enviado:", payload)
 

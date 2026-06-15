@@ -121,6 +121,22 @@ def on_message(client, userdata, msg):
             print("Payload inválido")
             return
 
+        if "timestamp_envio" in payload:
+
+            latencia_ms = (
+                time.time_ns()
+                - payload["timestamp_envio"]
+            ) / 1_000_000
+
+            print(
+                f"[LATÊNCIA] {latencia_ms:.2f} ms"
+            )
+
+            payload["latencia_ms"] = round(
+                latencia_ms,
+                2
+            )
+        
         payload["timestamp"] = int(
             time.time() * 1000
         )
