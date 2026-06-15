@@ -198,7 +198,7 @@ REDIS_PORT=6379
 JWT_SECRET=sua_chave_secreta
 
 # API
-API_URL=https://smart-factory-api.azurewebsites.net
+API_URL=https://smart-factory-api-atcye9cbf0gtaad0.eastus-01.azurewebsites.net
 ```
 
 ## Descrição das Variáveis
@@ -247,13 +247,13 @@ api
 
 ## Acessando o Dashboard
 
-Após iniciar os containers:
+Após iniciar os containers, acesse o Dashboard:
 
 ```text
 https://smart-factory-api-atcye9cbf0gtaad0.eastus-01.azurewebsites.net
 ```
 
-caso esteja indisponível, hospede uma URL pública na Azure ou acesse o dashboard localmente:
+caso esteja indisponível, você pode hospedar uma URL pública na Azure e atualizar a variável `API_URL` ou acesse o dashboard localmente:
 
 ```text
 http://localhost:8000
