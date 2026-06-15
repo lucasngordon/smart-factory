@@ -4,6 +4,11 @@ import os
 
 SECRET = os.getenv("JWT_SECRET")
 
+if not SECRET:
+    raise ValueError(
+        "JWT_SECRET não configurado"
+    )
+
 
 def gerar_token():
 
