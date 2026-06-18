@@ -183,3 +183,24 @@ async def websocket_endpoint(websocket: WebSocket):
 
     except Exception as e:
         print("ERRO WS:", e)
+        
+@app.get("/telemetria-redis")
+def ultima_telemetria():
+
+    dado = redis_client.get(
+        "ultima_telemetria"
+    )
+
+    if not dado:
+        return {}
+
+    return json.loads(dado)
+
+@app.get("/telemetria")
+def telemetria():
+
+    dado = col.find_one(
+        sort=[("timestamp", -1)]
+    )
+
+    return dado
