@@ -7,8 +7,8 @@ services:
     environment:
       - MQTT_BROKER=${MQTT_BROKER}
       - MQTT_PORT=8883
-      - MQTT_USERNAME=admin
-      - MQTT_PASSWORD=Fabrica123
+      - MQTT_USERNAME=${MQTT_USERNAME}
+      - MQTT_PASSWORD=${MQTT_PASSWORD}
       - TOPIC=fabrica/raw
       - REDIS_HOST=redis
       - REDIS_PORT=6379
@@ -21,8 +21,8 @@ services:
     environment:
       - MQTT_BROKER=${MQTT_BROKER}
       - MQTT_PORT=8883
-      - MQTT_USERNAME=admin
-      - MQTT_PASSWORD=Fabrica123
+      - MQTT_USERNAME=${MQTT_USERNAME}
+      - MQTT_PASSWORD=${MQTT_PASSWORD}
       - INPUT_TOPIC=fabrica/raw
       - OUTPUT_TOPIC=fabrica/processado
       - REDIS_HOST=redis
@@ -37,8 +37,8 @@ services:
     environment:
       - MQTT_BROKER=${MQTT_BROKER}
       - MQTT_PORT=8883
-      - MQTT_USERNAME=admin
-      - MQTT_PASSWORD=Fabrica123
+      - MQTT_USERNAME=${MQTT_USERNAME}
+      - MQTT_PASSWORD=${MQTT_PASSWORD}
       - INPUT_TOPIC=fabrica/raw
       - OUTPUT_TOPIC=fabrica/processado
       - MONGO_URI=${MONGO_URI}

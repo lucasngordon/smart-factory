@@ -184,6 +184,8 @@ async def websocket_endpoint(websocket: WebSocket):
     except Exception as e:
         print("ERRO WS:", e)
         
+ #Testes JMeter
+        
 @app.get("/telemetria-redis")
 def ultima_telemetria():
 
@@ -196,7 +198,7 @@ def ultima_telemetria():
 
     return json.loads(dado)
 
-@app.get("/telemetria")
+@app.get("/telemetria-mongo")
 def telemetria():
 
     dado = col.find_one(
