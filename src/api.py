@@ -203,4 +203,9 @@ def telemetria():
         sort=[("timestamp", -1)]
     )
 
+    if not dado:
+        return {}
+
+    dado.pop("_id", None)
+
     return dado
