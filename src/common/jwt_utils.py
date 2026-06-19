@@ -14,7 +14,7 @@ def gerar_token():
 
     payload = {
         "service": "processador",
-        "exp": int(time.time()) + 300
+        "exp": int(time.time()) + 3600
     }
 
     return jwt.encode(
@@ -33,6 +33,9 @@ def validar_token(token):
             SECRET,
             algorithms=["HS256"]
         )
+
+    except jwt.ExpiredSignatureError:
+        return None
 
     except jwt.InvalidTokenError:
         return None

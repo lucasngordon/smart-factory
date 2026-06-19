@@ -58,6 +58,7 @@ services:
       - MONGO_URI=${MONGO_URI}
       - REDIS_HOST=redis
       - REDIS_PORT=6379
+      - JWT_SECRET=${JWT_SECRET}
     restart: always
 
   redis:
