@@ -1,7 +1,7 @@
 import paho.mqtt.client as mqtt
 import json
 import os
-from common.jwt_utils import gerar_token
+from src.common.jwt_utils import gerar_token
 
 # =========================
 # CONFIGURAÇÕES

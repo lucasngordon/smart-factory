@@ -5,10 +5,10 @@ import os
 import time
 import redis
 
-from observers.telemetria_subject import TelemetriaSubject
-from observers.mongo_observer import MongoObserver
-from observers.redis_observer import RedisObserver
-from common.jwt_utils import validar_token
+from src.observers.telemetria_subject import TelemetriaSubject
+from src.observers.mongo_observer import MongoObserver
+from src.observers.redis_observer import RedisObserver
+from src.common.jwt_utils import validar_token
 
 # =========================
 # CONFIGURAÇÕES

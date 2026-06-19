@@ -1,7 +1,7 @@
 from fastapi import FastAPI, WebSocket, Depends, HTTPException
 from fastapi.responses import HTMLResponse
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from common.jwt_utils import gerar_token, validar_token
+from src.common.jwt_utils import gerar_token, validar_token
 from pymongo import MongoClient
 import os
 import asyncio

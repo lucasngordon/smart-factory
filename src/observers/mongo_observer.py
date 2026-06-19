@@ -1,4 +1,4 @@
-from common.circuit_breaker import CircuitBreaker
+from src.common.circuit_breaker import CircuitBreaker
 from .observer import Observer
 import time
 
